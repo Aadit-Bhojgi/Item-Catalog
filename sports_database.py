@@ -1,4 +1,5 @@
-"""This file creates the table of our Database that are User Table, Categories Table and LatestItem Table"""
+"""This file creates the table of our Database that are User Table,
+ Categories Table and LatestItem Table"""
 from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -36,14 +37,17 @@ class Categories(Base):
         }
 
 
-# NOTE: time_created as the name suggests by default stores the creation of the value or row inserted.
-# and time_updated similarly Updates the Time whenever the row is updated by the user.
+# NOTE: time_created as the name suggests by default
+#  stores the creation of the value or row inserted.
+# and time_updated similarly Updates the Time
+# whenever the row is updated by the user.
 class LatestItem(Base):
     __tablename__ = 'latest_item'
 
     title = Column(String(80), nullable=False)
     time_created = Column(DateTime(timezone=True), default=datetime.utcnow)
-    time_updated = Column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
+    time_updated = Column(DateTime(timezone=True), default=datetime.utcnow,
+                          onupdate=datetime.utcnow)
     id = Column(Integer, primary_key=True)
     description = Column(String(250))
     item_category = Column(String(250))

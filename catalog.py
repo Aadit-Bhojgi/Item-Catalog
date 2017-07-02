@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, redirect, jsonify, url_for, flash
+from flask import Flask, render_template, request, \
+    redirect, jsonify, url_for, flash
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sports_database import Base, Categories, LatestItem, User
@@ -51,7 +52,8 @@ def fbconnect():
         'web']['app_id']
     app_secret = json.loads(
         open('fb_client_secrets.json', 'r').read())['web']['app_secret']
-    url = 'https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&' \
+    url = 'https://graph.facebook.com/oauth/access_token?grant_type=' \
+          'fb_exchange_token&' \
           'client_id=%s&client_secret=%s&fb_exchange_token=%s' % (
               app_id, app_secret, access_token)
     h = httplib2.Http()
@@ -59,16 +61,11 @@ def fbconnect():
 
     # Use token to get user info from API
     userinfo_url = "https://graph.facebook.com/v2.8/me"
-    ''' 
-        Due to the formatting for the result from the server token exchange we have to 
-        split the token first on commas and select the first index which gives us the key : value 
-        for the server access token then we split it on colons to pull out the actual token value
-        and replace the remaining quotes with nothing so that it can be used directly in the graph
-        api calls
-    '''
+
     token = result.split(',')[0].split(':')[1].replace('"', '')
 
-    url = 'https://graph.facebook.com/v2.8/me?access_token=%s&fields=name,id,email' % token
+    url = 'https://graph.facebook.com/v2.8/me?access_token=%s&' \
+          'fields=name,id,email' % token
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
     # print "url sent for API access:%s"% url
@@ -79,11 +76,13 @@ def fbconnect():
     login_session['email'] = data["email"]
     login_session['facebook_id'] = data["id"]
 
-    # The token must be stored in the login_session in order to properly logout
+    # The token must be stored in the login_session in order
+    # to properly logout
     login_session['access_token'] = token
 
     # Get user picture
-    url = 'https://graph.facebook.com/v2.8/me/picture?access_token=%s&redirect=0&height=200&width=200' % token
+    url = 'https://graph.facebook.com/v2.8/me/picture?' \
+          'access_token=%s&redirect=0&height=200&width=200' % token
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
     data = json.loads(result)
@@ -104,7 +103,8 @@ def fbconnect():
     output += '<img src="'
     output += login_session['picture']
     output += ' " style = "width: 300px; height: 300px;' \
-              'border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+              'border-radius: 150px;-webkit-border-radius: ' \
+              '150px;-moz-border-radius: 150px;"> '
 
     flash("Now logged in as %s" % login_session['username'])
     return output
@@ -116,18 +116,21 @@ def fbdisconnect():
     facebook_id = login_session['facebook_id']
     # The access token must me included to successfully logout
     access_token = login_session['access_token']
-    url = 'https://graph.facebook.com/%s/permissions?access_token=%s' % (facebook_id, access_token)
+    url = 'https://graph.facebook.com/%s/permissions?' \
+          'access_token=%s' % (facebook_id, access_token)
     h = httplib2.Http()
     result = h.request(url, 'DELETE')[1]
     return "you have been logged out"
 
 
-# called inside login.html to enable 3rd party Authentication through Google
+# called inside login.html to enable 3rd party
+# Authentication through Google
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     # Validate state token
     if request.args.get('state') != login_session['state']:
-        response = make_response(json.dumps('Invalid state parameter.'), 401)
+        response = make_response(json.dumps
+                                 ('Invalid state parameter.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
     # Obtain authorization code
@@ -146,13 +149,14 @@ def gconnect():
 
     # Check that the access token is valid.
     access_token = credentials.access_token
-    url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s'
+    url = ('https://www.googleapis.com/oauth2/v1/''tokeninfo?access_token=%s'
            % access_token)
     h = httplib2.Http()
     result = json.loads(h.request(url, 'GET')[1])
     # If there was an error in the access token info, abort.
     if result.get('error') is not None:
-        response = make_response(json.dumps(result.get('error')), 500)
+        response = make_response(json.dumps(result.
+                                            get('error')), 500)
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -160,22 +164,26 @@ def gconnect():
     gplus_id = credentials.id_token['sub']
     if result['user_id'] != gplus_id:
         response = make_response(
-            json.dumps("Token's user ID doesn't match given user ID."), 401)
+            json.dumps("Token's user ID doesn't match "
+                       "given user ID."), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
 
     # Verify that the access token is valid for this app.
     if result['issued_to'] != CLIENT_ID:
         response = make_response(
-            json.dumps("Token's client ID does not match app's."), 401)
+            json.dumps("Token's client ID does not match "
+                       "app's."), 401)
         print "Token's client ID does not match app's."
         response.headers['Content-Type'] = 'application/json'
         return response
 
     stored_credentials = login_session.get('credentials')
     stored_gplus_id = login_session.get('gplus_id')
-    if stored_credentials is not None and gplus_id == stored_gplus_id:
-        response = make_response(json.dumps('Current user is already connected.'),
+    if stored_credentials is not None and gplus_id == \
+            stored_gplus_id:
+        response = make_response(json.dumps('Current user '
+                                            'is already connected.'),
                                  200)
         response.headers['Content-Type'] = 'application/json'
         return response
@@ -232,7 +240,8 @@ def getUserID(email):
         return None
 
 
-# DISCONNECT - Revoke a current user's token and reset their login_session and called inside disconnect function
+# DISCONNECT - Revoke a current user's token and reset their
+#  login_session and called inside disconnect function
 
 
 @app.route('/gdisconnect')
@@ -245,13 +254,15 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
     access_token = credentials.access_token
-    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % access_token
+    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' \
+          % access_token
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
     if result['status'] != '200':
         # For whatever reason, the given token was invalid.
         response = make_response(
-            json.dumps('Failed to revoke token for given user.'), 400)
+            json.dumps('Failed to revoke token for given'
+                       ' user.'), 400)
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -274,55 +285,74 @@ def showItemSON():
 @app.route('/')
 @app.route('/catalog')
 def show_catalog():
-    # This function is called inside catalog.html/public.html to print the List of Categories
+    # This function is called inside catalog.html/public.html
+    #  to print the List of Categories
     def show(title_cat):
-        list = session.query(LatestItem.category_id).filter_by(title=title_cat).one()
+        list = session.query(LatestItem.category_id) \
+            .filter_by(title=title_cat).one()
         req_id = list.category_id
-        data = session.query(Categories.name).filter_by(id=req_id).one()
+        data = session.query(Categories.name) \
+            .filter_by(id=req_id).one()
         return data.name
 
-    # This Query gives the list of Latest updated items up to 14
+    # This Query gives the list of Latest updated
+    # items up to 14
     sports = session.query(Categories)
-    items = session.query(LatestItem).order_by(LatestItem.time_updated.desc()).limit(14)
-    # Checks whether the user is logged in or not and renders html pages accordingly!
+    items = session.query(LatestItem) \
+        .order_by(LatestItem.time_updated.desc()).limit(14)
+    # Checks whether the user is logged in or not
+    # and renders html pages accordingly!
     if 'username' not in login_session:
-        return render_template('public_catalog.html', sports=sports, items=items, show=show)
+        return render_template('public_catalog.html',
+                               sports=sports, items=items, show=show)
     else:
-        return render_template('catalog.html', sports=sports, items=items, show=show)
+        return render_template('catalog.html',
+                               sports=sports, items=items, show=show)
 
 
-# This functions gives the items of a particular Category
+# This functions gives the items of a
+# particular Category
 @app.route('/catalog/<string:sport_name>')
 def sportMenu(sport_name):
-    # For extracting the listed items of the asked sports category
+    # For extracting the listed items of the
+    # asked sports category
     sport_unique = session.query(Categories)
-    sport = session.query(Categories).filter_by(name=sport_name).first()
+    sport = session.query(Categories) \
+        .filter_by(name=sport_name).first()
     sport_id = sport.id
-    items = session.query(LatestItem).filter_by(category_id=sport_id).all()
+    items = session.query(LatestItem) \
+        .filter_by(category_id=sport_id).all()
     # For counting items
-    count = session.query(LatestItem).filter_by(category_id=sport_id).count()
-    # html page is provided with the resulted queries to display them
-    return render_template('item_menu.html', items=items, sport=sport,
+    count = session.query(LatestItem) \
+        .filter_by(category_id=sport_id).count()
+    # html page is provided with the resulted
+    #  queries to display them
+    return render_template('item_menu.html',
+                           items=items, sport=sport,
                            count=count, sport_unique=sport_unique)
 
 
 # This function gives the full description of the selected item
 @app.route('/catalog/<string:sport_name>/<string:item_name>')
 def itemInfo(sport_name, item_name):
-    item_des = session.query(LatestItem).filter_by(title=item_name).one()
-    return render_template('item_description.html', item_des=item_des, sport_name=sport_name)
+    item_des = session.query(LatestItem) \
+        .filter_by(title=item_name).one()
+    return render_template('item_description.html',
+                           item_des=item_des, sport_name=sport_name)
 
 
 # This function edits the selected item by the user
-@app.route('/catalog/<string:sport_name>/<string:item_name>/edit', methods=['GET', 'POST'])
+@app.route('/catalog/<string:sport_name>/<string:item_name>/edit',
+           methods=['GET', 'POST'])
 def itemEdit(sport_name, item_name):
     # Checks whether the user is logged in or not.
     if 'username' not in login_session:
         return redirect('/login')
     item = session.query(LatestItem).filter_by(title=item_name).one()
     if login_session['user_id'] != item.user_id:
-        # if the logged in user is not the creator of the selected item the
-        # this alert is displayed and user is redirected to the main menu
+        # if the logged in user is not the creator of the
+        # selected item the this alert is displayed and
+        #  user is redirected to the main menu
         return "<html><script>setTimeout(function() {" \
                "{alert('You are not authorized to " \
                "edit items to this Category. " \
@@ -331,8 +361,10 @@ def itemEdit(sport_name, item_name):
                'window.location.href = "/";}, 0)' \
                '</script></html>'
 
-    # If the method is POST then database is updated with the values provided by the user and redirected to the menu.
-    # If the method is GET then user is provided with ahtml form to insert the desired values.
+    # If the method is POST then database is updated with
+    # the values provided by the user and redirected to the menu.
+    # If the method is GET then user is provided with a
+    # html form to insert the desired values.
     if request.method == 'POST':
         if request.form['title']:
             item.title = request.form['title']
@@ -340,8 +372,10 @@ def itemEdit(sport_name, item_name):
             item.description = request.form['item_description']
         if request.form['item_category']:
             item.item_category = request.form['item_category']
-            i = session.query(LatestItem).filter_by(item_category=item.item_category).first()
-            j = session.query(Categories).filter_by(name=item.item_category).first()
+            i = session.query(LatestItem).filter_by(item_category=item.
+                                                    item_category).first()
+            j = session.query(Categories).filter_by(name=item.
+                                                    item_category).first()
             i.category_id = j.id
             item.category_id = i.category_id
         session.add(item)
@@ -349,19 +383,26 @@ def itemEdit(sport_name, item_name):
         flash('Item Successfully Edited!')
         return redirect(url_for('show_catalog'))
     else:
-        return render_template('edit_item.html', sport_name=sport_name, item_name=item_name, item=item)
+        return render_template('edit_item.html', sport_name=sport_name,
+                               item_name=item_name, item=item)
 
 
-# If the method is POST then the selected item is deleted from the database.
-# If the method is GET then the user redirected to the menu without any deletion.
-@app.route('/catalog/<string:sport_name>/<string:item_name>/delete', methods=['GET', 'POST'])
+# If the method is POST then the selected item
+# is deleted from the database.
+# If the method is GET then the user redirected to
+# the menu without any deletion.
+@app.route('/catalog/<string:sport_name>/'
+           '<string:item_name>/delete', methods=['GET', 'POST'])
 def itemDelete(item_name, sport_name):
     # Checks whether the user is logged in or not.
     if 'username' not in login_session:
         return redirect('/login')
-    itemToDelete = session.query(LatestItem).filter_by(title=item_name).one()
-    # if the logged in user is not the creator of the selected item the
-    # this alert is displayed and user is redirected to the main menu
+    itemToDelete = session.query(LatestItem) \
+        .filter_by(title=item_name).one()
+    # if the logged in user is not the creator
+    # of the selected item the
+    # this alert is displayed and user is
+    # redirected to the main menu
     if login_session['user_id'] != itemToDelete.user_id:
         return "<html><script>setTimeout(function() {" \
                "{alert('You are not authorized to " \
@@ -376,28 +417,40 @@ def itemDelete(item_name, sport_name):
         flash('Item Successfully Deleted')
         return redirect(url_for('show_catalog'))
     else:
-        return render_template('delete_Item.html', item=itemToDelete)
+        return render_template('delete_Item.html',
+                               item=itemToDelete)
 
 
-# If the method is POST then the user is provided to a html form to enter data to be added.
-# If the method is Get then the user is redirected to the menu and addition is cancelled.
+# If the method is POST then the user is provided
+# to a html form to enter data to be added.
+# If the method is Get then the user is redirected
+# to the menu and addition is cancelled.
 @app.route('/catalog/add', methods=['GET', 'POST'])
 def addItem():
     if request.method == 'POST':
-        # This Query checks whether the new item entered by the user is unique or not
+        # This Query checks whether the new item
+        # entered by the user is unique or not
         # i.e(To Prevent duplicacy in the database)
-        item = session.query(LatestItem).filter_by(title=request.form['title']).count()
+        item = session.query(LatestItem)\
+            .filter_by(title=request.form['title']).count()
         if item == 0:
-            # This query links the added item to its selected Category by the means of id which is the FOREIGN KEY.
-            cat = session.query(Categories).filter_by(name=request.form['category']).one()
+            # This query links the added item to its
+            # selected Category by the means of id which
+            # is the FOREIGN KEY.
+            cat = session.query(Categories)\
+                  .filter_by(name=request.form['category']).one()
             cat_id = cat.id
-            newItem = LatestItem(user_id=login_session['user_id'], title=request.form['title'],
-                                 description=request.form['description'], item_category=request.form[
-                    'category'], category_id=cat_id)
+            newItem = LatestItem(user_id=login_session['user_id'],
+                                 title=request.form['title'],
+                                 description=request.form['description'],
+                                 item_category=request.form['category'],
+                                 category_id=cat_id)
             session.add(newItem)
             session.commit()
-            flash('New Item (%s) has been added to Category(%s)' % (newItem.title, newItem.item_category))
-        # If count is not ZERO(0) then the item with same title is already present in the database
+            flash('New Item (%s) has been added to Category'
+                  '(%s)' % (newItem.title, newItem.item_category))
+        # If count is not ZERO(0) then the item with same
+        # title is already present in the database
         # and ERROR message is displayed
         if item > 0:
             flash('ERROR: Item is already present in the Database!')
@@ -426,7 +479,8 @@ def disconnect():
         # Succesfully logs out the user with the message.
         flash("You have successfully been logged out.")
         return redirect(url_for('show_catalog'))
-    # Displays the message if user is not logged in or isf session has expired.
+    # Displays the message if user is not logged
+    # in or if session has expired.
     else:
         flash("You were not logged in")
         return redirect(url_for('show_catalog'))
