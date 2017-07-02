@@ -23,7 +23,7 @@ Facebook's OAuth service at <a href="https://developers.facebook.com">`https://d
 # Initializing Database and Populating it with Rows
 To initialize the database with empty tables enter:
 ```
-$ python sports_databse.py
+$ python sports_database.py
 ```
 To populate the database with rows:
 ```
