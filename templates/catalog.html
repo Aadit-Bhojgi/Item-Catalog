@@ -1,0 +1,41 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+
+<div class = 'flash'>
+	{% with messages = get_flashed_messages() %}
+    {% if messages %}      
+        <ul>
+        {% for message in messages %}
+            <li> <strong> {{ message }} </strong> </li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+    {% endwith %}
+</div>
+
+<div class="row" style="border: 5px #e3e4e5 solid; margin: 50px 100px; height: 550px; background-color: #e3e4e5;">
+	<div class="col-md-6" style="height: 500px; line-height: 40px; border-right: 5px #24292e solid">
+		<h1 style="font-size: 80px; font-weight: 700">Categories</h1>
+		<h1 style="font-size: 37px; font-family: Helvetica; font-weight: 600; color: #24292e">
+		{% for i in sports %}
+			<a style="text-decoration: none; color: #333333" href="{{url_for('sportMenu', sport_name= i.name) }}">{{i.name}}</a><br>
+		{% endfor %}
+		</h1>
+	</div>
+	<div class="col-md-6" style="height: 500px; line-height: 40px">
+		<a style="text-decoration: none; color: #ed4f3d" href="{{url_for('addItem')}}"><h3 style="color: #ed4f3d; font-weight: 600"> Add Item </h3></a>
+		<h1 style="font-size: 60px; font-weight: 700">Latest Items</h1>
+		<h1 style="font-size: 24px; font-family: Helvetica; font-weight: 600; color: #333333; line-height: 25px">
+		<ul style="line-height: 1px">
+			{% for i in items %}
+				<li>{{i.title}}<span style="font-size: 20px; font-family: Helvetica; font-weight: 600; color: 
+				#7c7575; line-height: 25px;">
+		   		<i>({{ show(i.title) }})</i></span></li><br>
+			{% endfor %}
+		</ul>
+		</h1>
+	</div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,15 @@
+<header style="background-color: #5d2781; height: 100px; border-radius: 30px; margin: 10px 10px">
+<div class="row top-menu">
+<div class="col-md-6">
+	<a style="text-decoration: none" href="{{url_for('show_catalog')}}"><h1 style="color: white; padding-left: 20px; padding-top: 10px">Item catalog</h1>
+</div>
+<div class="col-md-6 text-right">
+		{%if 'username' not in session %}
+		<a style="text-decoration: none" href="{{url_for('showLogin')}}"><h2 style="padding-right: 20px; padding-top: 10px">LogIn</h2></a>
+		{% else %}
+		<a style="text-decoration: none" href="{{url_for('disconnect')}}"><h2 style="padding-right: 20px; padding-top: 10px">LogOut</h2></a>
+		{% endif %}
+		
+</div>
+</div>
+</header>

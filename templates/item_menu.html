@@ -1,0 +1,24 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+
+<div class="row" style="border: 5px #e3e4e5 solid; margin: 50px 100px; height: 550px; background-color: #e3e4e5;">
+	<div class="col-md-6" style="height: 500px; line-height: 40px; border-right: 5px #24292e solid">
+		<h1 style="font-size: 80px; font-weight: 700">Categories</h1>
+		<h1 style="font-size: 37px; font-family: Helvetica; font-weight: 600; color: #333333">
+		{% for i in sport_unique %}
+			<a style="text-decoration: none; color: #333333" href="{{url_for('sportMenu', sport_name=i.name) }}">{{i.name}}
+			</a><br>
+		{% endfor %}
+		</h1>
+	</div>
+	<div class="col-md-6" style="height: 500px; line-height: 25px; border-right: 5px #24292e solid">
+		<h1 style="font-size: 40px; font-weight: 700">{{sport.name}} items({{count}})</h1>
+		<p style="font-size: 20px; color: #5d2781">{{sport.description_cat}}</p>
+		{% for j in items %}
+			<a style="text-decoration: none; color: #5d2781" href="{{url_for('itemInfo', sport_name=sport.name, item_name=j.title) }}"><h1 style="font-size: 30px; font-weight: 700">{{j.title}}</h1>
+		{% endfor %}
+	</div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+
+<div class="row" style="border: 5px #e3e4e5 solid; margin: 50px 150px; height: 405px; background-color: #e3e4e5;">
+	<div class="row banner menu">
+		<div class="col-md-12 col-md-offset-1 padding-none">
+			<h1 style="font-weight: 600; font-size: 50px ">Edit Item</h1>
+		</div>
+	</div>
+	<div class=" col-md-6 col-md-offset-1">
+		<div class="row">			
+			<form action="#" method = "POST">
+			<label for="title">Title</label>
+				<input type ="text" maxlength="100" class="form-control" name="title" value="{{item_name }}">
+			<label for="item_description">Description</label>
+				<textarea style="width: 750px" class="form-control" rows="5" name="item_description" >{{item.description}}
+				</textarea>
+			<label for="item_category">Category</label><br>
+				<select class="form-control" name="item_category">
+					<option selected hidden>{{ sport_name }}</option>
+					<option>Soccer</option>
+					<option>Basketball</option>
+					<option>Baseball</option>
+					<option>Frisbee</option>
+					<option>Snowboarding</option>
+					<option>Rock Climbing</option>
+					<option>Foosball</option>
+					<option>Skating</option>
+					<option>Hockey</option>
+				</select><br>
+			<div class="col-md-2">
+				<span class="pull-right">
+					<button type="submit" class="btn btn-default delete" id="submit" type="submit">Save</button>
+				</span>
+			</div>
+			</form>
+			<div class="col-md-2">
+				<a href = '{{url_for("show_catalog")}}'>
+					<button class="btn btn-default delete"><span aria-hidden="true"></span>Cancel</button>
+				</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}

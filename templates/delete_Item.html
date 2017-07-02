@@ -1,0 +1,24 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+<div class="row" style="border: 5px #e3e4e5 solid; margin: 50px 150px; height: 405px; background-color: #e3e4e5;">
+	<div class="col-md-11 col-md-offset-1 padding-none">
+		<h1 style="font-weight: 600; font-size: 50px ">Delete Item</h1>
+		<h2> Are you sure you want to delete <span style="font-weight: 600; color: #5d2781">{{item.title}}</span> ?</h2>
+		<div class="row">
+			<form action="#" method = 'POST'>
+				<div class="col-md-1">
+					<button type="submit" class="btn btn-default delete" id="submit" type="submit">Delete</button>
+				</div>
+			</form>
+			<div class="col-md-1">
+				<a href = '{{url_for("show_catalog")}}'>
+				<button class="btn btn-default delete">
+				<span aria-hidden="true"></span> Cancel</button>
+				</a>
+			</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

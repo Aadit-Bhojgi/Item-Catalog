@@ -1,0 +1,40 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+<div class="row" style="border: 5px #e3e4e5 solid; margin: 50px 100px; height: 405px; background-color: #e3e4e5;">
+	<div class="row">
+		<form action="#" method = "POST">
+			<div class="col-md-12 col-md-offset-1 padding-none">
+				<h1 style="font-weight: 600; font-size: 47px">Add new Item</h1>
+				<label for="category">Category Name</label>
+					<select  style="width:200px" class="form-control" name="category" required/>
+						<option selected hidden>Choose Category</option>
+						<option>Soccer</option>
+						<option>Basketball</option>
+						<option>Baseball</option>
+						<option>Frisbee</option>
+						<option>Snowboarding</option>
+						<option>Rock Climbing</option>
+						<option>Foosball</option>
+						<option>Skating</option>
+						<option>Hockey</option>
+					</select>
+				<label for="title">Item Title</label>
+					<input style="width:200px" placeholder="Title" type ="text" maxlength="100" class="form-control" name="title" required>
+				<label for="description">Item Description</label>
+					<textarea style="width: 750px" placeholder="Description" class="form-control" rows="5" name="description" required></textarea>
+					<br>
+			</div>	
+	</div>
+	<div style="padding-left: 85px" class="row">
+		<div class="col-md-1">
+			<button type="submit" class="btn btn-default delete" id="submit" type="submit">Save</button>
+		</div>
+		</form>
+		<div class="col-md-1">
+			<a href = '{{url_for("show_catalog")}}'>
+					<button class="btn btn-default delete"><span aria-hidden="true"></span>Cancel</button>
+		</div>
+	</div>
+</div>
+{% endblock %}

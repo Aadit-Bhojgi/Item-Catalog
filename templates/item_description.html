@@ -1,0 +1,23 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+<div class="row" style="border: 5px #e3e4e5 solid; margin: 50px 150px; height: 405px; background-color: #e3e4e5;">
+<div class="row">
+	<div class="col-md-12">
+		<h1 style="font-size: 50px; font-weight: 700">{{item_des.title}}</h1>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12">
+		<p style="font-size: 20px; color: #5d2781">{{item_des.description}}</p>
+	</div>
+</div>
+<div class="row">
+	<div class=" col-md-4 bottom-align-text ">
+		<a style="color: #ed4f3d; text-decoration: none" href="{{url_for('itemEdit', item_name=item_des.title, sport_name=sport_name) }}"> <h3 style="font-weight: 600; color: 
+		#ed4f3d">Edit</a><span style="font-weight: 600; color: 
+		#333333"> | </span><a style="color: #ed4f3d; text-decoration: none" href="{{ url_for('itemDelete', item_name=item_des.title, sport_name=sport_name) }}">Delete</h3></a>
+	</div>
+</div>
+</div>
+{% endblock %}
