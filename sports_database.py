@@ -3,19 +3,7 @@ from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
-from pytz import timezone
 from datetime import datetime
-
-"""To get current time(In india)"""
-# As i reside in india so i have taken UTC+5:30
-# which is 'Asia/Kolkata' you can change it according
-# to the localtimezone of your country
-UTC = timezone('Asia/Kolkata')
-
-
-def time_now():
-    return datetime.now(UTC)
-
 
 Base = declarative_base()
 
@@ -55,7 +43,7 @@ class LatestItem(Base):
 
     title = Column(String(80), nullable=False)
     time_created = Column(DateTime(timezone=True), default=datetime.utcnow)
-    time_updated = Column(DateTime(timezone=True), onupdate=datetime.utcnow)
+    time_updated = Column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
     id = Column(Integer, primary_key=True)
     description = Column(String(250))
     item_category = Column(String(250))
