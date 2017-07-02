@@ -13,7 +13,8 @@ $ cd /Item-catalog
 
 # Google Authentication Services
 You need to supply a client_secrets.json file. You can create an application to use
-Google's OAuth service at <a href="https://console.developers.google.com.">`https://console.developers.google.com`</a> 
+Google's OAuth service at <a href="https://console.developers.google.com.">`https://console.developers.google.com`</a>
+and add your Client Id to `login.html` for Google LogIn.
 
 # Facebook Authentication Services
 Just like Before, you need to supply a fb_client_secrets.json file. You can create an application to use
