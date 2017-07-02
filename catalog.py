@@ -267,18 +267,12 @@ def gdisconnect():
         return response
 
 
-# returns Database of category in json format
-@app.route('/catalog/category/JSON')
-def showCategoryJson():
-    category = session.query(Categories).all()
-    return jsonify(category=[r.serialize for r in category])
-
-
-# returns Database of Latest items in json format
-@app.route('/catalog/items/JSON')
-def showItemSON():
-    item = session.query(LatestItem).all()
-    return jsonify(item=[r.serialize for r in item])
+# returns Database information of the
+# arbitrary(desired) Item entered by the user in json format
+@app.route('/catalog/<string:items>/JSON')
+def showCategoryJson(items):
+    info = session.query(LatestItem).filter_by(title=items).all()
+    return jsonify(info=[r.serialize for r in info])
 
 
 # connects to catalog.html/public.html for catalog Menu
@@ -431,14 +425,14 @@ def addItem():
         # This Query checks whether the new item
         # entered by the user is unique or not
         # i.e(To Prevent duplicacy in the database)
-        item = session.query(LatestItem)\
+        item = session.query(LatestItem) \
             .filter_by(title=request.form['title']).count()
         if item == 0:
             # This query links the added item to its
             # selected Category by the means of id which
             # is the FOREIGN KEY.
-            cat = session.query(Categories)\
-                  .filter_by(name=request.form['category']).one()
+            cat = session.query(Categories) \
+                .filter_by(name=request.form['category']).one()
             cat_id = cat.id
             newItem = LatestItem(user_id=login_session['user_id'],
                                  title=request.form['title'],
