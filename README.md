@@ -7,7 +7,7 @@ Authentication is handled by Google and Facebook OAuth2.0
 To download and install this program, you will need git installed.
 Open CLI in you system, enter:
 ```
-$ git clone 
+$ git clone https://github.com/Aadit-Bhojgi/Item-Catalog.git
 $ cd /Item-catalog
 ```
 
