@@ -37,7 +37,6 @@ To start the application enter:
 $ python catalog.py
 * Running on http://0.0.0.0:8000/
 * Restarting with reloader
-
 ```
 
 Then, go to you browser and type `https://localhost:8000/`
