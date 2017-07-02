@@ -40,6 +40,6 @@ $ python catalog.py
 
 ```
 
-Then, go to you browser and type `https://localhost:8000/`
+Then, go to you browser and type `https://localhost:8000/`<br>
 Below is the Main Page:
 <img src="Capture.PNG" alt="image">
