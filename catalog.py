@@ -268,11 +268,30 @@ def gdisconnect():
 
 
 # returns Database information of the
-# arbitrary(desired) Item entered by the user in json format
-@app.route('/catalog/<string:items>/JSON')
-def showCategoryJson(items):
-    info = session.query(LatestItem).filter_by(title=items).all()
-    return jsonify(info=[r.serialize for r in info])
+# arbitrary(desired) Category entered by the user in json format
+@app.route('/catalog/<string:category_name>/JSON')
+def showCategoryJson(category_name):
+    # Checks whether the user is logged in or not.
+    if 'username' not in login_session:
+        return redirect('/login')
+    category = session.query(Categories) \
+        .filter_by(name=category_name).all()
+    sport = session.query(Categories) \
+        .filter_by(name=category_name).first()
+    sport_id = sport.id
+    items = session.query(LatestItem) \
+        .filter_by(category_id=sport_id).all()
+    return jsonify(category=[r.serialize for r in category],
+                   items=[r.serialize for r in items])
+
+@app.route('/catalog/<string:category_name>/<string:item_name>/JSON')
+def showItemJson(category_name, item_name):
+    # Checks whether the user is logged in or not.
+    if 'username' not in login_session:
+        return redirect('/login')
+    item = session.query(LatestItem) \
+        .filter_by(title=item_name).all()
+    return jsonify(item=[r.serialize for r in item])
 
 
 # connects to catalog.html/public.html for catalog Menu
@@ -421,6 +440,9 @@ def itemDelete(item_name, sport_name):
 # to the menu and addition is cancelled.
 @app.route('/catalog/add', methods=['GET', 'POST'])
 def addItem():
+    # Checks whether the user is logged in or not.
+    if 'username' not in login_session:
+        return redirect('/login')
     if request.method == 'POST':
         # This Query checks whether the new item
         # entered by the user is unique or not
