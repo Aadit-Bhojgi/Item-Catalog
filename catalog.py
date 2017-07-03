@@ -284,6 +284,7 @@ def showCategoryJson(category_name):
     return jsonify(category=[r.serialize for r in category],
                    items=[r.serialize for r in items])
 
+
 @app.route('/catalog/<string:category_name>/<string:item_name>/JSON')
 def showItemJson(category_name, item_name):
     # Checks whether the user is logged in or not.
